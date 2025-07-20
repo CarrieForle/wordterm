@@ -131,12 +131,11 @@ pub mod wordle {
         let wordle = Wordle::today()?;
         const MAX_TRIES_NUM: u8 = 6;
 
-        println!("{}", wordle.answer);
         println!("{}\n", iter::repeat_n('_', wordle.len()).collect::<String>());
 
         for i in 0..MAX_TRIES_NUM {
             println!("({}/{})", i + 1, MAX_TRIES_NUM);
-            let res = guess_recursive(&wordle)?;
+            let res = guess_recursive(&wordle, i == 0)?;
 
             if res.is_correct() {
                 return Ok((i + 1, MAX_TRIES_NUM, wordle));
@@ -162,7 +161,7 @@ pub mod wordle {
         Ok((MAX_TRIES_NUM, MAX_TRIES_NUM, wordle))
     }
 
-    fn guess_recursive<'a>(wordle: &'a Wordle) 
+    fn guess_recursive<'a>(wordle: &'a Wordle, mut hint: bool) 
         -> Result<WordleResult, Box<dyn Error>> {
         use std::io::{self, Write};
         
@@ -170,6 +169,12 @@ pub mod wordle {
         let mut trimmed_input = "";
         
         while trimmed_input.is_empty() {
+            if hint {
+                print!("Start typing ");
+
+                hint = false;
+            }
+
             print!("> ");
             io::stdout().flush()?;
             io::stdin().read_line(&mut input)?;
@@ -178,7 +183,7 @@ pub mod wordle {
 
         wordle.guess(trimmed_input).or_else(|err| {
             println!("{err}. Please try again.");
-            guess_recursive(wordle)
+            guess_recursive(wordle, false)
         })
     }
 }
