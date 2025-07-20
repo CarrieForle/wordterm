@@ -1,4 +1,4 @@
-use wordle::play_today;
+use wordterm::play_today;
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
