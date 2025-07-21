@@ -93,7 +93,7 @@ pub mod wordle {
             }
 
             let word = word.to_ascii_lowercase();
-            let range = 'a'..'z';
+            let range = 'a'..='z';
 
             if word.chars().all(|ch| range.contains(&ch)) {
                 Some(word)
