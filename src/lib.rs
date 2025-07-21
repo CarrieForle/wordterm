@@ -147,18 +147,18 @@ pub mod wordle {
             println!("({}/{})", i + 1, MAX_TRIES_NUM);
             let res = guess_recursive(&wordle, i == 0)?;
 
-            if res.is_correct() {
-                return Ok((i + 1, MAX_TRIES_NUM, wordle));
-            }
-
-            let res: String = res.guess
+            let res_str: String = res.guess
                 .chars()
-                .zip(res.res.into_iter())
+                .zip(res.res.iter())
                 .map(|(ch, kind)| {
                     format!("{}{}", kind.style(), ch)
                 }).collect();
 
-            println!("{res}{Reset}\n");
+            println!("{res_str}{Reset}\n");
+
+            if res.is_correct() {
+                return Ok((i + 1, MAX_TRIES_NUM, wordle));
+            }
         }
 
         Ok((MAX_TRIES_NUM, MAX_TRIES_NUM, wordle))
