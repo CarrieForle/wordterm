@@ -16,11 +16,11 @@ mod test {
         let guess = wordle.guess("fryer").unwrap();
 
         let expected = [
-            LetterType::Exact,
-            LetterType::None,
-            LetterType::WrongPos,
-            LetterType::None,
-            LetterType::None,
+            LetterKind::Exact,
+            LetterKind::None,
+            LetterKind::WrongPos,
+            LetterKind::None,
+            LetterKind::None,
         ];
 
         let res = guess.res
@@ -37,11 +37,11 @@ mod test {
         let guess = wordle.guess("local").unwrap();
 
         let expected = [
-            LetterType::WrongPos,
-            LetterType::WrongPos,
-            LetterType::None,
-            LetterType::None,
-            LetterType::WrongPos,
+            LetterKind::WrongPos,
+            LetterKind::WrongPos,
+            LetterKind::None,
+            LetterKind::None,
+            LetterKind::WrongPos,
         ];
 
         let res = guess.res

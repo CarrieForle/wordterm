@@ -2,6 +2,7 @@ pub use crate::wordle::*;
 
 pub mod wordle {
     use core::error::Error;
+    use anstyle::{Style, AnsiColor};
 
     pub struct Wordle {
         pub answer: String
@@ -59,15 +60,15 @@ pub mod wordle {
             let res: Vec<_> = guess
                 .char_indices()
                 .map(|(i, guess_ch)| {
-                    let mut t = LetterType::None;
+                    let mut t = LetterKind::None;
 
                     for (j, ans_ch) in self.answer.char_indices() {
                         if guess_ch == ans_ch {
                             if i == j {
-                                t = LetterType::Exact;
+                                t = LetterKind::Exact;
                                 break;
                             } else {
-                                t = LetterType::WrongPos;
+                                t = LetterKind::WrongPos;
                             }
                         }
                     };
@@ -104,29 +105,38 @@ pub mod wordle {
 
     pub struct WordleResult {
         pub guess: String,
-        pub res: Vec<LetterType>,
+        pub res: Vec<LetterKind>,
     }
 
     impl WordleResult {
         pub fn is_correct(&self) -> bool {
             self.res.iter().all(|x| {
-                LetterType::Exact == *x
+                LetterKind::Exact == *x
             })
         }
     }
 
     #[derive(PartialEq)]
-    pub enum LetterType {
+    pub enum LetterKind {
         Exact,
         WrongPos,
         None,
     }
 
+    impl LetterKind {
+        pub fn style(&self) -> Style {
+            match self {
+                Self::Exact => AnsiColor::BrightGreen.on_default(),
+                Self::WrongPos => AnsiColor::BrightYellow.on_default(),
+                Self::None => AnsiColor::BrightWhite.on_default(),
+            }
+        }
+    }
+
     pub fn play_today() -> Result<(u8, u8, Wordle), Box<dyn Error>> {
-        use self::LetterType::*;
         use std::iter;
         use anstream::println;
-        use anstyle::{AnsiColor, Reset};
+        use anstyle::Reset;
 
         let wordle = Wordle::today()?;
         const MAX_TRIES_NUM: u8 = 6;
@@ -144,16 +154,9 @@ pub mod wordle {
             let res: String = res.guess
                 .chars()
                 .zip(res.res.into_iter())
-                .map(|i| {
-                let green = AnsiColor::BrightGreen.on_default();
-                let yellow = AnsiColor::BrightYellow.on_default();
-                let white = AnsiColor::BrightWhite.on_default();
-                match i {
-                    (ch, Exact) => format!("{green}{ch}"),
-                    (ch, WrongPos) => format!("{yellow}{ch}"),
-                    (ch, None) => format!("{white}{ch}"),
-                }
-            }).collect();
+                .map(|(ch, kind)| {
+                    format!("{}{}", kind.style(), ch)
+                }).collect();
 
             println!("{res}{Reset}\n");
         }
