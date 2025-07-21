@@ -22,7 +22,7 @@ their occurance as a hint:
   but in the wrong position.
 - {white}White{blue} means the letter is not part of the word.
 {reset}"#, 
-blue = AnsiColor::BrightBlue.on_default(),
+blue = AnsiColor::BrightCyan.on_default(),
 green = LetterKind::Exact.style(), 
 yellow = LetterKind::WrongPos.style(), 
 white = LetterKind::None.style(),
