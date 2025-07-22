@@ -1,9 +1,12 @@
-use wordterm::{play_today, LetterKind};
+use wordterm::{play, TWordle, NytWordle, LetterKind};
+use datetime::DatePiece;
 use std::error::Error;
 use anstream::println;
 use anstyle::{Reset, AnsiColor};
 
 fn main() -> Result<(), Box<dyn Error>> {
+    let wordle = NytWordle::today()?;
+
     println!(
 r#"
                         _ _                      
@@ -17,18 +20,25 @@ r#"
 right five-letter word.
 For each tries the letters are colored based on 
 their occurance as a hint:
-- {green}Green{blue} means this letter is correct.
-- {yellow}Yellow{blue} means this letter is part of the word 
+{white}- {exact}Green{blue} means this letter is correct.
+{white}- {wrongpos}Yellow{blue} means this letter is part of the word 
   but in the wrong position.
-- {white}White{blue} means the letter is not part of the word.
-{reset}"#, 
-blue = AnsiColor::BrightCyan.on_default(),
-green = LetterKind::Exact.style(), 
-yellow = LetterKind::WrongPos.style(), 
-white = LetterKind::None.style(),
-reset = Reset, );
+{white}- {none}White{blue} means the letter is not part of the word.
 
-    let (tries, max_tries, wordle) = play_today()?;
+{white}You are playing on {year}-{month:02}-{day:02}{reset}
+"#, 
+blue = AnsiColor::BrightCyan.on_default(),
+white = AnsiColor::White.on_default(),
+exact = LetterKind::Exact.style(), 
+wrongpos = LetterKind::WrongPos.style(), 
+none = LetterKind::None.style(),
+year = wordle.date().year(),
+month = wordle.date().month() as u8,
+day = wordle.date().day(),
+reset = Reset,
+);
+    
+    let (tries, max_tries) = play(&wordle)?;
 
     match tries {
         1 => {
