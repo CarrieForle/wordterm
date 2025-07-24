@@ -23,12 +23,12 @@ their occurance as a hint:
 {white}- {exact}Green{blue} means this letter is correct.
 {white}- {wrongpos}Yellow{blue} means this letter is part of the word 
   but in the wrong position.
-{white}- {none}White{blue} means the letter is not part of the word.
+{white}- {none}Gray{blue} means the letter is not part of the word.
 
-{white}You are playing on {year}-{month:02}-{day:02}{reset}
+{reset}You are playing on {year}-{month:02}-{day:02}
 "#, 
 blue = AnsiColor::BrightCyan.on_default(),
-white = AnsiColor::White.on_default(),
+white = AnsiColor::BrightWhite.on_default(),
 exact = LetterKind::Exact.style(), 
 wrongpos = LetterKind::WrongPos.style(), 
 none = LetterKind::None.style(),

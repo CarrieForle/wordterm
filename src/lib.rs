@@ -1,3 +1,7 @@
+#[cfg(test)]
+mod test;
+mod word;
+
 pub use wordle::*;
 
 pub mod wordle {
@@ -8,6 +12,7 @@ pub mod wordle {
         convenience::Today,
         DatePiece,
     };
+    use crate::word::WORDS;
 
     pub trait TWordle {
         fn answer(&self) -> &str;
@@ -15,7 +20,15 @@ pub mod wordle {
         
         fn guess(&self, guess: &str) -> Result<WordleResult, &'static str> {
             if guess.len() != self.answer().len() {
-                Err("The length is not right")?;
+                Err("The length is not right.")?;
+            }
+
+            if self.answer().len() == 5 {
+                if WORDS.iter()
+                .chain(&[self.answer()])
+                .all(|w| *w != guess) {
+                    Err("No such word.")?;
+                }
             }
 
             let guess = validate(guess)?;
@@ -53,7 +66,7 @@ pub mod wordle {
     impl Wordle {
         pub fn new(answer: &str) -> Result<Wordle, &'static str> {
             if answer.is_empty() {
-                return Err("Wordle must not be empty");
+                return Err("Wordle must not be empty.");
             }
 
             let answer = validate(answer)?;
@@ -142,12 +155,12 @@ pub mod wordle {
             match self {
                 Self::Exact => AnsiColor::BrightGreen.on_default(),
                 Self::WrongPos => AnsiColor::BrightYellow.on_default(),
-                Self::None => AnsiColor::BrightWhite.on_default(),
+                Self::None => AnsiColor::White.on_default(),
             }
         }
     }
 
-    /// Play a round of wordle
+    /// Play wordle
     pub fn play(wordle: &impl TWordle) -> Result<(u8, u8), Box<dyn Error>> {
         use std::iter;
         use anstream::println;
@@ -199,14 +212,14 @@ pub mod wordle {
         }
 
         wordle.guess(trimmed_input).or_else(|err| {
-            println!("{err}. Please try again.");
+            println!("{err} Please try again.");
             guess_recursive(wordle, false)
         })
     }
 
     fn validate(word: &str) -> Result<String, &'static str> {
         if !word.is_ascii() {
-            Err("Invalid characters")?;
+            Err("Invalid characters.")?;
         }
 
         let word = word.to_ascii_lowercase();
@@ -215,9 +228,7 @@ pub mod wordle {
         if word.chars().all(|ch| range.contains(&ch)) {
             Ok(word)
         } else {
-            Err("Invalid characters")
+            Err("Invalid characters.")
         }
     }
 }
-
-mod test;
