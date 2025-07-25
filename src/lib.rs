@@ -7,11 +7,7 @@ pub use wordle::*;
 pub mod wordle {
     use core::error::Error;
     use anstyle::{Style, AnsiColor};
-    use datetime::{
-        LocalDate,
-        convenience::Today,
-        DatePiece,
-    };
+    use time::{Date, OffsetDateTime};
     use crate::word::WORDS;
 
     pub trait TWordle {
@@ -79,7 +75,7 @@ pub mod wordle {
 
     pub struct NytWordle {
         wordle: Wordle,
-        date: LocalDate,
+        date: Date,
     }
 
     impl NytWordle {
@@ -87,7 +83,7 @@ pub mod wordle {
             use reqwest;
 
             const NYT_URL: &'static str = "https://www.nytimes.com/svc/wordle/v2";
-            let today = LocalDate::today();
+            let today = OffsetDateTime::now_local()?.date();
             let date = format!("{}-{:02}-{:02}", today.year(), today.month() as u8, today.day());
             let url = format!("{NYT_URL}/{date}.json");
             let mut res: serde_json::Value = reqwest::blocking::get(url)?
@@ -105,7 +101,7 @@ pub mod wordle {
             })
         }
 
-        pub fn date(&self) -> LocalDate {
+        pub fn date(&self) -> Date {
             return self.date
         }
     }

@@ -1,5 +1,4 @@
 use wordterm::{play, TWordle, NytWordle, LetterKind};
-use datetime::DatePiece;
 use std::error::Error;
 use anstream::println;
 use anstyle::{Reset, AnsiColor};
