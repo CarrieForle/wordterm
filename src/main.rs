@@ -43,7 +43,7 @@ reset = Reset,
         1 => {
             println!("Correct. You did it first try. GG.");
         }
-        t if t == max_tries => {
+        t if t > max_tries => {
             println!("You're out of tries. The answer is {}.", wordle.answer());
         }
         t => {

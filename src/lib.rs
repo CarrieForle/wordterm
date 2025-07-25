@@ -184,7 +184,7 @@ pub mod wordle {
             }
         }
 
-        Ok((MAX_TRIES_NUM, MAX_TRIES_NUM))
+        Ok((MAX_TRIES_NUM + 1, MAX_TRIES_NUM))
     }
 
     fn guess_recursive(wordle: &impl TWordle, mut hint: bool) 
